@@ -133,12 +133,21 @@ class User {
       throw new ExpressError("username must be provided", 400)
     }
     try {
-      const results = await db.query(`SELECT username,first_name,last_name,phone,join_at,last_login_at FROM users WHERE username=$1`, [username])
-      const user = results.rows[0]
-      if (!user) {
-        throw new ExpressError(`Username ${username}, not found`)
+      const results = await db.query(`SELECT id,to_username,body,sent_at,read_at FROM messages WHERE from_username=$1`, [username])
+      console.log(results.rows)
+      const userMessages = results.rows
+      let counter = 0
+      for (let message of userMessages) {
+
+        console.log('Start individual message')
+        const result = await db.query('SELECT username,first_name,last_name,phone FROM users WHERE username=$1', [message.to_username])
+        console.log(result.rows[0])
+        console.log('End of individual message')
+        userMessages[counter].to_username = result.rows[0]
+        counter += 1
       }
-      return user
+
+      return userMessages
     } catch (error) {
       return error
     }
@@ -152,7 +161,31 @@ class User {
    *   {id, first_name, last_name, phone}
    */
 
-  static async messagesTo(username) { }
+  static async messagesTo(username) {
+    if (!username) {
+      throw new ExpressError("username must be provided", 400)
+    }
+    try {
+      const results = await db.query(`SELECT id,from_username,body,sent_at,read_at FROM messages WHERE to_username=$1`, [username])
+      console.log(results.rows)
+      const userMessages = results.rows
+      let counter = 0
+      for (let message of userMessages) {
+
+        console.log('Start individual message')
+        console.log(message.from_username)
+        const result = await db.query('SELECT username,first_name,last_name,phone FROM users WHERE username=$1', [message.from_username])
+        console.log(result.rows[0])
+        console.log('End of individual message')
+        userMessages[counter].from_username = result.rows[0]
+        counter += 1
+      }
+
+      return userMessages
+    } catch (error) {
+      return error
+    }
+  }
 }
 
 

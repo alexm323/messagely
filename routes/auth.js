@@ -1,5 +1,7 @@
 const express = require('express');
 const User = require('../models/user');
+const jwt = require("jsonwebtoken");
+const { SECRET_KEY } = require('../config');
 const router = new express.Router();
 
 /** POST /login - login: {username, password} => {token}
@@ -8,12 +10,19 @@ const router = new express.Router();
  *
  **/
 router.get('/login', async (req, res, next) => {
-    const { username, password } = req.body;
-    const idk = await User.authenticate(username, password)
-    if (idk) {
-        await User.updateLoginTimestamp(username)
+    try {
+        const { username, password } = req.body;
+        const correctLogin = await User.authenticate(username, password)
+        if (correctLogin) {
+            await User.updateLoginTimestamp(username)
+            const token = jwt.sign({ username }, SECRET_KEY)
+            return res.json({ _token: token })
+        }
+    } catch (error) {
+        return next(error)
     }
-    return res.json(idk)
+
+
 
 })
 
@@ -28,19 +37,16 @@ router.post('/register', async (req, res, next) => {
     try {
         const { username, password, first_name, last_name, phone } = req.body;
         let user = await User.register(username, password, first_name, last_name, phone)
-        return res.json(user)
+        if (user) {
+            await User.updateLoginTimestamp(username)
+            const token = jwt.sign(username, SECRET_KEY)
+            return res.json({ _token: token })
+        }
     } catch (error) {
         return next(error)
     }
 })
 
-router.get('/all', async (req, res, next) => {
-    const all = await User.all()
-    return res.json(all)
-})
-router.get('/get', async (req, res, next) => {
-    const { username } = req.body
-    const user = await User.get(username)
-    return res.json(user)
-})
+
+
 module.exports = router;

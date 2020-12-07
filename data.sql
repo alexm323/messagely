@@ -27,7 +27,14 @@ CREATE TABLE users
         -- INSERT INTO users
         --     (username,password,first_name,last_name,phone)
         -- VALUES('alexm', 'hello1', 'alex', 'mars', '3232375382')
---         // INSERT INTO messages (from_username,to_username,body,sent_at,read_at)VALUES ('alexm','test','hey test how ya doing',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
+        -- INSERT INTO messages
+        --     (from_username,to_username,body,sent_at,read_at)
+        -- VALUES
+        --     ('alexm', 'test', 'hey test how ya doing part 2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+        -- INSERT INTO messages
+        --     (from_username,to_username,body,sent_at,read_at)
+        -- VALUES
+        --     ('alexm', 'test', 'hey test how ya doing part 3', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 -- // INSERT INTO messages (from_username,to_username,body,sent_at,read_at)VALUES ('test','alexm','Im good alex thanks for asking',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
 
 
